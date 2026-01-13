@@ -10,6 +10,8 @@ import { tireSchemas } from "./schemas/tires.schema";
 // import { userSchemas } from "@/schemas/auth";
 // import { eventSchemas } from "@/schemas/event";
 
+import fastifyWebsocket from "@fastify/websocket";
+
 export interface AppOptions
   extends FastifyServerOptions,
     Partial<AutoloadPluginOptions> {}
@@ -58,8 +60,17 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // });
 
   // Place here your custom code!
-  fastify.setErrorHandler(function (error, request, reply) {
-    console.error(error);
+  fastify.setErrorHandler((error: Error, request, reply) => {
+    // Prefer Fastify's logger if present, but always log something.
+    if (request.log) request.log.error({ err: error }, "Unhandled error");
+    else console.error(error);
+
+    if (reply.sent) return;
+    const statusCode = (error as any)?.statusCode ?? 500;
+    reply.status(statusCode).send({
+      error: "Internal Server Error",
+      message: statusCode < 500 ? error.message : "Unexpected error",
+    });
   });
   // Do not touch the following lines
 
@@ -68,9 +79,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // through your application
 
   // Import websocket plugin
-  fastify.register(require("@fastify/websocket"));
+  await fastify.register(fastifyWebsocket);
 
-  fastify.register(AutoLoad, {
+  await fastify.register(AutoLoad, {
     dir: join(__dirname, "plugins"),
     options: opts,
   });
@@ -78,7 +89,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // This loads all plugins defined in routes
   // define your routes in one of these
 
-  fastify.register(AutoLoad, {
+  await fastify.register(AutoLoad, {
     dir: join(__dirname, "routes"),
     options: opts,
   });

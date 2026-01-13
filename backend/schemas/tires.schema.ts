@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
 
-const tireTemperatureSchema = z.object({
+export const tireTemperatureSchema = z.object({
   frontRightTireTemperature: z.number(),
   frontLeftTireTemperature: z.number(),
   rearRightTireTemperature: z.number(),

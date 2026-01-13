@@ -1,7 +1,7 @@
-import "@fastify/websocket";
+// import "@fastify/websocket";
 
-declare module "fastify" {
-  interface RouteShorthandOptions {
-    websocket?: boolean;
-  }
-}
+// declare module "fastify" {
+//   interface RouteShorthandOptions {
+//     websocket?: boolean;
+//   }
+// }

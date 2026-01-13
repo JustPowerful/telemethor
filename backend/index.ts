@@ -20,7 +20,9 @@ declare module "fastify" {
 async function createServerApp(fastify: Fastify, opts: FastifyServerOptions) {
   const app: FastifyInstance = fastify(opts);
 
-  app.register(import("./app.js")).ready((err) => {
+  // With Bun + TS + noEmit, there is no compiled .js file on disk.
+  // Import the TypeScript module directly so routes/plugins (including websocket) actually load.
+  app.register(import("./app.ts")).ready((err) => {
     if (err) throw err;
     app.log.info("Server app is ready.");
   });
@@ -28,9 +30,9 @@ async function createServerApp(fastify: Fastify, opts: FastifyServerOptions) {
   return app;
 }
 
-const app = await createServerApp(fastify, {});
+const app = await createServerApp(fastify, { logger: true });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 const host = "localhost";
 
 app.listen({ host, port: Number(port) }, (err) => {
