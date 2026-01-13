@@ -1,6 +1,7 @@
 import { type FastifyPluginAsync } from "fastify";
 import { tireTemperatureSchema } from "../../schemas/tires.schema";
 import { parseAndValidateWsMessage } from "../../lib/utils/ws";
+import redisClient from "../../lib/redis";
 
 const eventRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get(
@@ -12,6 +13,8 @@ const eventRoutes: FastifyPluginAsync = async (fastify) => {
       req.log.info(
         "✅ New WebSocket connection established for /tires/temperature"
       );
+
+      redisClient.set("last_connection", new Date().toISOString());
 
       // Let the client know the upgrade + handler is live.
       socket.send(
