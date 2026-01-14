@@ -60,7 +60,7 @@ const eventRoutes: FastifyPluginAsync = async (fastify) => {
       });
       if (!data) return;
 
-      publisher.publish(redisKeys.tire.pressure, JSON.stringify(data));
+      publisher.publish(redisKeys.tires.pressure, JSON.stringify(data));
 
       socket.send(
         JSON.stringify({ type: "ok", received: data, current: data })
@@ -97,7 +97,7 @@ const eventRoutes: FastifyPluginAsync = async (fastify) => {
         if (!data) return;
 
         // Update the temporary state.
-        publisher.publish(redisKeys.tire.temperature, JSON.stringify(data));
+        publisher.publish(redisKeys.tires.temperature, JSON.stringify(data));
 
         socket.send(
           JSON.stringify({ type: "ok", received: data, current: data })
