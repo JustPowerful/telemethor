@@ -54,3 +54,23 @@ export function parseAndValidateWsMessage<TSchema extends ZodTypeAny>(params: {
 
   return result.data;
 }
+
+/**
+ * Helper to forward Redis pub/sub message for a specific channel over WebSocket
+ * @param socket WebSocket to send the message to
+ * @param channel Redis channel name
+ * @param message Message received from Redis
+ */
+export function subForward(
+  socket: WebSocket,
+  channel: string,
+  message: string
+) {
+  try {
+    const payload = JSON.parse(message);
+    socket.send(JSON.stringify({ channel, payload }));
+  } catch (err) {
+    // If parsing fails just send raw message
+    socket.send(JSON.stringify({ channel, payload: message }));
+  }
+}

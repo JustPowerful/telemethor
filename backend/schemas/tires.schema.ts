@@ -8,11 +8,20 @@ export const tireTemperatureSchema = z.object({
   rearLeftTireTemperature: z.number(),
 });
 
+export const tirePressureSchema = z.object({
+  frontRightTirePressure: z.number(),
+  frontLeftTirePressure: z.number(),
+  rearRightTirePressure: z.number(),
+  rearLeftTirePressure: z.number(),
+});
+
 export type TireTemperatureInput = z.infer<typeof tireTemperatureSchema>;
+export type TirePressureInput = z.infer<typeof tirePressureSchema>;
 
 export const { schemas: tireSchemas, $ref } = buildJsonSchemas(
   {
     tireTemperatureSchema,
+    tirePressureSchema,
   },
   {
     $id: "tireSchema",
